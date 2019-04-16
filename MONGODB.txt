@@ -1,0 +1,66 @@
+Server -
+
+cd Downloads/big-data-3/mongodb
+
+ls
+
+mongodb/bin/mongod --dbpath db # Create path for the database
+
+
+
+
+Client -
+
+cd Downloads/big-data-3/mongodb
+
+mongodb/bin/mongo
+show dbs
+
+use sample
+
+show tables
+
+db.users.findOne()
+
+db.users.findOne({},{_id:0}) # Excludes (auto-generated)id column
+
+db.users.findOne({},{_id:1}) # Includes (auto-generated) only id column
+
+db.users.find({},{_id:1}) # Includes (auto-generated) only id column and prints all values in the table
+
+db.users.distinct("user_name") # Distinct values of user name
+
+db.users.find({user_name: "OTF_Mo"}) # shows all values related to the user name given in ""
+
+db.users.find({user_name: "OTF_Mo"}).pretty() # shows all values related to the user name given in "", in a formatted form
+
+db.users.find({user_name: "OTF_Mo"},{tweet_ID:1})
+
+db.users.find({user_name: "OTF_Mo"},{tweet_ID:1, _id:0})
+
+db.users.find({tweet_text:"FIFA"}) # Text is equal to FIFA
+
+db.users.find({tweet_text:/FIFA/}) # Text containing FIFA term
+
+db.users.find({tweet_text:/FIFA/}).count() # Gives count of term
+
+db.users.createIndex({"tweet_text": "text"}) # Assigning variable "text" to "tweet_text" column name
+
+db.users.find({$text: {$search : "FIFA"}}).count() # Searching FIFA in tweets
+
+db.users.find({$text: {$search : "FIFA -Texas"}}).count() # Searching FIFA in tweets ( as many occurrences as possible)
+
+db.users.find({tweet_mentioned_count: {$gt: 6}}).pretty() # Gives all the tweets where tweet mentioned count was greater than 6
+
+db.users.find({$where:"this.tweet_mentioned_count>this.tweet_followers_count"}).count()
+
+db.users.find({$and: [{tweet_text: /FIFA/},{tweet_mentioned_count: {$gt:4}}]}).count()
+
+db.users.find({$and: [{tweet_text: /FIFA/}, {'user.Location' : "Nigeria"}]}).count()
+
+
+Hive
+Pig scripting language(2 books)
+Integrate UDF
+Big-data-2 - pageranking
+Big-data-3
