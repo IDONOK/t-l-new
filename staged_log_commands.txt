@@ -1,0 +1,71 @@
+#Creating the database frame,
+ named as "staged_log" and stored as text file in the specified location
+hive
+> CREATE TABLE staged_log
+    
+> (level STRING, datetime STRING,
+    
+> source STRING,
+    
+> event_id INT,
+    
+> category STRING,
+    
+> details STRING)
+    
+> ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+    
+> STORED AS TEXTFILE LOCATION '/data/staged_log';
+
+
+
+
+#Loading data from the text file to the database frame
+hive
+> load data inpath '/data/staged_log.txt' into table staged_log;
+
+#Fetching data from the staged_log table
+hive
+> SELECT * FROM staged_log;
+
+hive
+> SELECT * FROM staged_log LIMIT 10;
+
+#Duplicating staged_log's frame as system_log
+hive
+> CREATE TABLE system_log
+    
+> (level STRING, datetime STRING,
+    
+> source STRING,
+    
+> event_id INT,
+    
+> category STRING,
+    
+> details STRING);
+
+#Fetching all non-null values in the newly created table "system_log"
+hive
+> INSERT INTO TABLE system_log
+   
+> SELECT * FROM staged_log
+    
+> WHERE event_id IS NOT NULL;
+
+#Fetching data from the system_log table
+hive
+> SELECT * FROM system_log;
+
+hive
+> CREATE TABLE error_log
+    
+> STORED AS TEXTFILE LOCATION '/data/error_log'
+    
+> AS
+    
+> SELECT level,datetime,source,event_id,category,details
+    
+> FROM system_log
+    
+> WHERE level='Error';
