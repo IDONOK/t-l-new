@@ -1,0 +1,61 @@
+#Loading 
+data
+Reading = LOAD '/Data/pigdata_temp' USING PigStorage(',') AS (Date:chararray,Temp:float);
+
+DUMP Reading;
+(2/20/2019,32.0)
+(2/20/2019,37.0)
+(2/20/2019,42.0)
+(2/21/2019,45.0)
+(2/21/2019,56.0)
+(2/21/2019,78.0)
+(2/22/2019,89.0)
+(2/22/2019,45.0)
+(2/22/2019,56.0)
+(2/23/2019,78.0)
+(2/23/2019,56.0)
+(2/23/2019,54.0)
+
+
+
+# Grouping the data, 
+datewise
+GroupedReading= GROUP Reading BY Date;
+
+(Date,{(Date,)})
+(2/20/2019,{(2/20/2019,32.0),(2/20/2019,37.0),(2/20/2019,42.0)})
+(2/21/2019,{(2/21/2019,78.0),(2/21/2019,56.0),(2/21/2019,45.0)})
+(2/22/2019,{(2/22/2019,56.0),(2/22/2019,89.0),(2/22/2019,45.0)})
+(2/23/2019,{(2/23/2019,56.0),(2/23/2019,54.0),(2/23/2019,78.0)})
+
+
+
+
+# Finding the average of Temp variable
+GroupedAvg= FOREACH GroupedReading GENERATE group, AVG(Reading.Temp) AS avgtemp;
+(2/20/2019,37.0)
+(2/21/2019,59.666666666666664)
+(2/22/2019,63.333333333333336)
+(2/23/2019,62.666666666666664)
+
+
+
+# To get distinct row data for each group
+AvgTemp= FOREACH GroupedAvg GENERATE FLATTEN(group) AS Date, avgtemp;
+(2/20/2019,37.0)
+(2/21/2019,59.666666666666664)
+(2/22/2019,63.333333333333336)
+(2/23/2019,62.666666666666664)
+
+
+
+
+# Ordering the distinct rows in ascending
+SortedResult= ORDER AvgTemp BY Date ASC;
+
+2/20/2019,37.0
+2/21/2019,59.666666666666664
+2/22/2019,63.333333333333336
+2/23/2019,62.666666666666664
+Date,
+
